@@ -1,7 +1,7 @@
 import openai
 
 # Set up the OpenAI API client
-openai.api_key = "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"
+openai.api_key = "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"
 
 
 # Set up the model and prompt
