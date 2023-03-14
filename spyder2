@@ -64,12 +64,91 @@ int main()
         sem_destroy(&mutex);
 }
 //2
-import threading
-import time
-import random
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <semaphore.h>
 
-class BarberShop:
-    def __init__(self):
-        self.waiting_room = []
-        self.barber_room = []
-        self.max_customers =
+#define MAX_CUSTOMERS 3
+
+sem_t barber_sem;
+sem_t customer_sem;
+sem_t waiting_room_sem;
+
+int num_waiting = 0;
+int num_customers_served = 0;
+
+void *barber(void *arg) {
+    while (1) {
+        // Wait for a customer to arrive
+        sem_wait(&customer_sem);
+
+        // Invite customer into barber room
+        sem_wait(&waiting_room_sem);
+        num_waiting--;
+        sem_post(&barber_sem);
+        sem_post(&waiting_room_sem);
+
+        // Cut hair
+        printf("Barber is cutting hair.\n");
+        sleep(rand() % 5);
+
+        // Finish cutting hair and ask customer to leave
+        printf("Barber is finished cutting hair.\n");
+        num_customers_served++;
+    }
+}
+
+void *customer(void *arg) {
+    int customer_id = *(int *)arg;
+    while (1) {
+        // Check if there's a free chair in the waiting room
+        sem_wait(&waiting_room_sem);
+        if (num_waiting < MAX_CUSTOMERS) {
+            num_waiting++;
+            printf("Customer %d is waiting in the waiting room.\n", customer_id);
+            sem_post(&customer_sem);
+            sem_post(&waiting_room_sem);
+            break;
+        }
+        sem_post(&waiting_room_sem);
+
+        // If all chairs are taken, leave the shop
+        printf("Customer %d is leaving the shop because all chairs are taken.\n", customer_id);
+        break;
+    }
+
+    // Wait to be invited into the barber room
+    sem_wait(&barber_sem);
+
+    // Get haircut
+    printf("Customer %d is getting a haircut.\n", customer_id);
+    sleep(rand() % 5);
+
+    // Leave the shop
+    printf("Customer %d is leaving the shop.\n", customer_id);
+}
+
+int main() {
+    pthread_t barber_thread, customer_threads[MAX_CUSTOMERS];
+    srand(time(NULL));
+
+    sem_init(&barber_sem, 0, 0);
+    sem_init(&customer_sem, 0, 0);
+    sem_init(&waiting_room_sem, 0, 1);
+
+    pthread_create(&barber_thread, NULL, barber, NULL);
+
+    for (int i = 0; i < MAX_CUSTOMERS; i++) {
+        int *arg = malloc(sizeof(*arg));
+        *arg = i;
+        pthread_create(&customer_threads[i], NULL, customer, arg);
+    }
+
+    for (int i = 0; i < MAX_CUSTOMERS; i++) {
+        pthread_join(customer_threads[i], NULL);
+    }
+
+    return 0;
+}
