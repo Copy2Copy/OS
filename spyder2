@@ -1,0 +1,30 @@
+import threading
+import time
+
+# A semaphore is a synchronization primitive that can be used to limit
+# the number of threads that can access a resource.
+
+# Create a semaphore with an initial value of 1
+semaphore = threading.Semaphore(1)
+
+# Function that will be run by the threads
+def worker():
+    # Acquire the semaphore
+    semaphore.acquire()
+    print('Semaphore acquired')
+    time.sleep(2)
+    # Release the semaphore
+    semaphore.release()
+    print('Semaphore released')
+
+# Create two threads
+t1 = threading.Thread(target=worker)
+t2 = threading.Thread(target=worker)
+
+# Start the threads
+t1.start()
+t2.start()
+
+# Wait for the threads to finish
+t1.join()
+t2.join()
