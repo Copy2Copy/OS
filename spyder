@@ -1,4 +1,3 @@
-
 import openai
 
 # Set up the OpenAI API client
