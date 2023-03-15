@@ -1,0 +1,96 @@
+//to make the text in quotes display with color
+grep -- color="always" "Linux" Welcome.txt
+
+//to print no. of lines Linux is there
+grep -c "Linux" Welcome.txt
+
+//prints 2 lines extra after Linux encountered the last
+grep -A 2 "Linux" Welcome.txt
+
+//prints 2 lines extra which comes before Linux encountered the last
+grep -B 2 "Linux" Welcome.txt
+
+//ignores case sensitive and prints all linux and Linux
+grep -i "Linux" Welcome.txt
+
+//prints either Linux or various
+grep "Linux \|various" Welcome.txt
+
+//prints Linux from both files
+grep "Linux" Welcome.txt file.txt
+
+//prints the filename of Linux
+grep -l "Linux" Welcome.txt
+
+//exact string irundha print aagum
+grep -w "Linux is" Welcome.txt
+
+//line beginning la Linux irundha print aagum
+grep "^Linux" Welcome.txt
+
+//end of the line la andha word irundha print aagum
+grep "system.$" Welcome.txt
+
+//Li and x ku nadula enna irundhalum mothama print aagum
+grep "Li..x" Welcome.txt
+
+//use kaprom either r or d irundha print aagum
+grep "use[rd]" Welcome.txt
+
+//use kaprom r varakoodadhu else print aagum
+grep "use[^r]" Welcome.txt
+
+//capital letter la start aayi fullstop or comma la mudinja print aagum
+//. na single char,  .* na multiple char enna vena irukalam
+grep -E "^[A-Z].*[.,]$" Welcome.txt
+
+//single char munnadi vandha print aagum
+grep -E "?perating" Welcome.txt
+
+//+ ku munnadi irukra char ethana vaati vandhalum print aagum
+grep -E "L+inux" Welcome.txt
+
+//to print empty lines with line number
+grep -n ^$ Welcome.txt
+
+//to print no of empty lines
+grep -c ^$ Welcome.txt
+
+//start of line la 2 char lines irundha print aagum
+grep '^..$' Welcome.txt
+
+//directory ellame print aagum
+ls -l | grep '^d'
+
+//word oda first la idhu irundha print aagum
+grep '\<dev' Welcome.txt
+
+//word oda last la irundha print aagum
+grep 'ing\>' Welcome.txt
+
+//L rendu vaati vandha andha line print aagum
+grep 'L\{2\}' Welcome.txt
+
+//L 2 or more times vandha andha line print aagum
+grep 'L\{2,\}' Welcome.txt
+
+//1 to 3 times L vandha line print aagum
+grep 'L\{1,3\}' Welcome.txt
+
+//first letter compulsary ah irukanum meedhi illa naalum paravala
+grep 'LL*' Welcome.txt
+
+//is illa in edhu irundhalum print aagum
+grep 'is\|in' Welcome.txt
+
+//6 digit irukanum and . irukanum
+grep '[0-9]\{6\}\.' Welcome.txt
+
+//. irundha ellame print aagum
+grep '\.' Welcome.txt
+
+//Linux illadha ella line um print aagum
+grep -v 'Linux' Welcome.txt
+
+//L or l la start aagum, i will be passed as parameter who's value will be subs by l
+grep '[Ll]\(i\).*\l' Welcome.txt
