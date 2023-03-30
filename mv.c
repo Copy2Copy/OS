@@ -1,7 +1,7 @@
-#include
-#include
-#include
-#include
+#include<unistd.h>
+#include<fcntl.h>
+#include<stdlib.h>
+#include<stdio.h>
 main( int argc,char *argv[] )
 {
 int i,fd1,fd2;
