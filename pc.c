@@ -1,52 +1,48 @@
-}
--- Simply creates the string and shared memory portion.
--- run it in background
-/* shm_client.c */
-/*
-* shm-client - client program to demonstrate shared
-memory. */
+/*parent_child.c */
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
-#include <stdio.h>
-#define SHMSIZE 27
-main()
+int main(void)
 {
 int shmid;
-key_t key;
-char *shm, *s;
-/*
-* We need to get the segment named
-* "5678", created by the server.
-*/
-key = 5678;
-/*
-* Locate the
-segment. */
-if ((shmid = shmget(key, SHMSIZE, 0666)) < 0)
-{ perror("shmget");
-exit(1);
-}
-/*
+char *shmPtr;
+int n;
+if (fork( ) == 0)
+{
+sleep(5); /* UUPS */
+if( (shmid = shmget(2041, 32, 0)) == -1 )
+{
 
-* Now we attach the segment to our data
-space. */
-if ((shm = shmat(shmid, NULL, 0)) == (char *) -1)
-{ perror("shmat");
 exit(1);
 }
-/*
-* Now read what the server put in the
-memory. */
-for (s = shm; *s != NULL; s++)
-putchar(*s);
-putchar('\n');
-/*
-* Finally, change the first character of the
-* segment to '*', indicating we have read
-* the segment.
-*/
-*shm = '*';
-printf ("\nIts done from client.\n\n\n");
+shmPtr = shmat(shmid, 0, 0);
+if (shmPtr == (char *) -1)
+exit(2);
+printf ("\nChild Reading ....\n\n");
+for (n = 0; n < 26; n++)
+putchar(shmPtr[n]);
+putchar('\n'); }
+else
+{
+if( (shmid = shmget(2041, 32, 0666 | IPC_CREAT)) == -1 )
+{
+exit(1);
+}
+shmPtr = shmat(shmid, 0, 0);
+if (shmPtr == (char *) -1)
+exit(2);
+for (n = 0; n < 26; n++)
+shmPtr[n] = 'a' + n;
+printf ("Parent Writing ....\n\n") ;
+for (n = 0; n < 26; n++)
+putchar(shmPtr[n]);
+putchar('\n'); wait(NULL);
+shmdt(NULL);
+if( shmctl(shmid, IPC_RMID, NULL) == -1 )
+{
+perror("shmctl");
+exit(-1);
+}
+}
 exit(0);
 }
