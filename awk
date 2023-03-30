@@ -1,4 +1,3 @@
-
 1. Write an awk command to print the lines and line numberin the given input file .
 
 $ cat>cmds.awk
